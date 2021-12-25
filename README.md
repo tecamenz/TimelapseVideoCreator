@@ -1,5 +1,5 @@
 # TimelapseVideoCreator
-Simple scripts to create timelapse from images
+Simple command line tool to create timelapse videos from images
 
 
 ## Setup Conda Environment
