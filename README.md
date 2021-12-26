@@ -11,8 +11,8 @@ Usage: main.py [OPTIONS] [SRC] [DST]
   Create timelapse from images located in SRC and saves the video to DST
 
   If SRC contains subfolders, the program recursively scans all subfolders and
-  creates a video per subfolder. The folder structure at DSC will be
-  preserved, and the output videos are saved in respectively named folders.
+  creates a video per subfolder. The folder structure is replicated at DSC and
+  the output videos are saved respectivly.
 
   If pre-processing via --average is set to True, the DST will contain
   intermediate (averaged) images along with a output video.
@@ -25,16 +25,18 @@ Options:
   --window INTEGER   Defines the number of images to average. Default is 3.
   --step INTEGER     Defines the number of images to step forward. Default is
                      1.
-  --filetype TEXT    Defines the image filetype to search for.
+  --filetype TEXT    Defines the image filetype to search for. Default is jpg
   --average          Option to average [window] images into one. Default is
                      False.
   --imscale INTEGER  Defines the width of the output image after averaging.
-                     Default is -1 which preserves native resolution.
-  --vscale INTEGER   Defines the width of the output video. Default is 1920.
+                     Height is calculated to preserve aspect ratio. Default is
+                     -1 which preserves native resolution.
+  --vscale INTEGER   Defines the width of the output video. Height is
+                     calculated to preserve aspect ratio. Default is 1920.
   --novid            If to omit video creation. Only used when --average ==
                      True.
   --localize TEXT    String for timezone conversion.
-  --ffmpeg_exe TEXT  Path to ffmpeg.exe.
+  --ffmpeg-exe TEXT  Path to ffmpeg.exe. Default is the current directory
   --help             Show this message and exit.
 
 ```
