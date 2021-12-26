@@ -5,7 +5,7 @@ Input images are sorted via EXIF timestamp to ensure correct order.
 
 
 ## Usage
-```cmd
+```text
 Usage: main.py [OPTIONS] [SRC] [DST]
 
   Create timelapse from images located in SRC and saves the video to DST
