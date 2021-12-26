@@ -1,7 +1,7 @@
 import click
 from utils import log
 from timelapse.processing import process_folders
-from timelapse.video import video_from_images, vide_from_paths, create_path_file
+from timelapse.video import video_from_images, video_from_paths, create_path_file
 import os
 from datetime import datetime
 import time
@@ -28,7 +28,12 @@ def main(src, dst, window, step, filetype, average, imscale, vscale, novid, loca
             src_path = os.path.join(folder, '*.{}'.format(filetype))
             path_file = create_path_file(paths=paths, step=step)
             dest_path = os.path.join(folder, 'timelapse_{}.mp4'.format(datetime.now().strftime('%Y%m%d%H%M%S')))
-            vide_from_paths(path_file=path_file, dest_path=dest_path, vscale=vscale, ffmpeg_exe=ffmpeg_exe)
+            video_from_paths(path_file=path_file, dest_path=dest_path, vscale=vscale, ffmpeg_exe=ffmpeg_exe)
+            try:
+                os.remove(path=path_file)
+            except Exception as e:
+                logger.error("Can't remove path_file")
+                logger.exception(e)
 
     end = time.time()
     delta = end-start
@@ -42,15 +47,15 @@ def main(src, dst, window, step, filetype, average, imscale, vscale, novid, loca
 @click.option('--step', default=1, help='Defines the number of images to step forward. Default is 1.')
 @click.option('--filetype', default='jpg', help='Defines the image filetype to search for. Default is jpg')
 @click.option('--average', is_flag=True, default=False, help='Option to average [window] images into one. Default is False.')
-@click.option('--imscale', default=-1, help='Defines the width of the output image after averaging. Default is -1 which preserves native resolution.')
-@click.option('--vscale', default=1920, help='Defines the width of the output video. Default is 1920.')
+@click.option('--imscale', default=-1, help='Defines the width of the output image after averaging. Height is calculated to preserve aspect ratio. Default is -1 which preserves native resolution.')
+@click.option('--vscale', default=1920, help='Defines the width of the output video. Height is calculated to preserve aspect ratio. Default is 1920.')
 @click.option('--novid', is_flag=True, default=False, help='If to omit video creation. Only used when --average == True.')
 @click.option('--localize', default=None, help='String for timezone conversion.')
-@click.option('--ffmpeg_exe', default='/', help='Path to ffmpeg.exe.')
+@click.option('--ffmpeg-exe', default='/ffmpeg.exe', help='Path to ffmpeg.exe. Default is the current directory')
 def main_command(src, dst, window, step, filetype, average, imscale, vscale, novid, localize, ffmpeg_exe):
     """Create timelapse from images located in SRC and saves the video to DST
 
-    If SRC contains subfolders, the program recursively scans all subfolders and creates a video per subfolder. The folder structure at DSC will be preserved, and the output videos are saved in respectively named folders. 
+    If SRC contains subfolders, the program recursively scans all subfolders and creates a video per subfolder. The folder structure is replicated at DSC and the output videos are saved respectivly. 
     
     If pre-processing via --average is set to True, the DST will contain intermediate (averaged) images along with a output video.
     
