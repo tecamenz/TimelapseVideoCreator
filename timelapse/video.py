@@ -5,9 +5,9 @@ def create_path_file(paths, step=1):
     path_file = 'path_file.txt'
     paths = paths[0::step]
     with open(path_file, 'w') as f:
-            for path in paths:
-                path = path.replace('\\', '/')
-                f.write('file ' + path + '\n')
+        for path in paths:
+            path = path.replace('\\', '/')
+            f.write('file ' + path + '\n')
     return path_file
 
 def video_from_images(src_path, dest_path, vscale, ffmpeg_exe):
@@ -38,7 +38,7 @@ def video_from_images(src_path, dest_path, vscale, ffmpeg_exe):
     .run(cmd=ffmpeg_exe)
     )
 
-def vide_from_paths(path_file, dest_path, vscale, ffmpeg_exe):
+def video_from_paths(path_file, dest_path, vscale, ffmpeg_exe):
     input_args = {
     "safe": "0",
     "f": 'concat',
