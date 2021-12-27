@@ -1,5 +1,5 @@
 import ffmpeg
-from glob import glob
+import os
 
 def create_path_file(paths, step=1):
     path_file = 'path_file.txt'
@@ -10,10 +10,10 @@ def create_path_file(paths, step=1):
             f.write('file ' + path + '\n')
     return path_file
 
-def video_from_images(src_path, dest_path, vscale, ffmpeg_exe):
+def video_from_images(src_path, dest_path, vscale, fps, bitrate, ffmpeg_exe):
     input_args = {
     "f": "image2",
-    "r": "30"
+    "r": "{}".format(fps)
     }
 
     output_args = {
@@ -22,8 +22,8 @@ def video_from_images(src_path, dest_path, vscale, ffmpeg_exe):
     "c:v": "h264_nvenc",
     "rc:v": "vbr",
     "cq:v": "1",
-    "b:v": "20M",
-    "maxrate:v": "100M",
+    "b:v": "{}M".format(bitrate), # Video bitrate. Value is in bits.
+    "maxrate:v": "{}M".format(bitrate),
     "profile:v": "high",
     "pix_fmt": "yuv420p",
     # "framerate": "30"
@@ -38,11 +38,13 @@ def video_from_images(src_path, dest_path, vscale, ffmpeg_exe):
     .run(cmd=ffmpeg_exe)
     )
 
-def video_from_paths(path_file, dest_path, vscale, ffmpeg_exe):
+def video_from_paths(path_file, dest_path, vscale, fps, bitrate, ffmpeg_exe):
+    # if os.path.exists(dest_path):
+    #     os.mkdirs(dest_path)
     input_args = {
     "safe": "0",
     "f": 'concat',
-    "r": "30"
+    "r": "{}".format(fps)
     }
     
     output_args = {
@@ -51,8 +53,8 @@ def video_from_paths(path_file, dest_path, vscale, ffmpeg_exe):
     "c:v": "h264_nvenc",
     "rc:v": "vbr",
     "cq:v": "1",
-    "b:v": "20M",
-    "maxrate:v": "100M",
+    "b:v": "{}M".format(bitrate),
+    "maxrate:v": "{}M".format(bitrate),
     "profile:v": "high",
     "pix_fmt": "yuv420p",
     # "framerate": "30"

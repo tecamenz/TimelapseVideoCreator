@@ -29,7 +29,9 @@ def get_batch_recursive(src, filetype):
 def get_image(path, target_width, target_heigth):
     im = Image.open(path).convert('RGB')
     width, height = im.size
-    if (width == target_width) and (height == target_heigth):
+    if (target_width == -1) and (target_heigth == -1):
+        im = np.array(im).astype(np.float32)
+    elif (width == target_width) and (height == target_heigth):
         im = np.array(im).astype(np.float32)
     else:
         logger.info('Resizing {}'. format(path))
@@ -37,21 +39,19 @@ def get_image(path, target_width, target_heigth):
         im = np.array(im).astype(np.float32)
     return {'path': path, 'im': im}
 
-def get_image_info(params):
-    """Get information such as creation date and size from the images
+def get_image_info(path, localize):
+    """Get the information such as creation date and size from the image
 
     Args:
-        params (dict): Key "path" provides path to image
-                       Key "localize" provides string of timezone convertsion
-        localize (str, optional): Identifier for the timezone. Defaults to 'Europe/Zurich'.
+        path (str): Path to the file
+        localize (str): Identifier for the timezone
 
     Returns:
-        [type]: [description]
+        dict: Extracted information such as creation time and size
     """    
-    path = params['path']
-    localize = params['localize']
+    date = None
     im = Image.open(path)
-    date_str = im.getexif()[306]
+    date_str = im.getexif()[306] # The date and time of image creation
     width, height = im.size
     im.close()
     try:
@@ -110,7 +110,7 @@ def process_folders(src, dst, window, step, filetype, average, imscale, localize
         click.echo('Processing subfolder "{}" ({} images)'.format(foldername, len(paths)))
         dest_path = os.path.join(dst, foldername)
         params = [{'path': path, 'localize': localize} for path in paths]
-        image_info = list(pool.map(get_image_info, params))
+        image_info = list(pool.map(lambda x: get_image_info(**x), params))
         click.echo('Checking size')
         # calculate the median of width / height to get the most common values
         width = np.median([x['width'] for x in image_info])
@@ -137,23 +137,18 @@ def process_folders(src, dst, window, step, filetype, average, imscale, localize
     return processed
         
 
-def average_Images(batch):
-    """Function to load and average images 
+def average_Images(paths, new_path, target_width, target_height):
+    """Function to laod and average images
 
     Args:
-        batch (dict): Key "paths" provides a set of image paths to average. 
-                      Key "new_path" provides the location the resulting image is saved
-                      Key "target_width" Defines the width of the output image after averaging.
-                      Key "target_height" Defines the height of the output image after averaging.
+        paths (list): Set of paths to images 
+        new_path (str): Path where to save the output
+        target_width (int): target width of the final output
+        target_height (int): target height of the final output  
 
     Returns:
-        str: Paths where images successfully were saved
+        str: Path where output image has been saved
     """    
-    paths = batch['paths']
-    new_path = batch['new_path']
-    target_width = batch['target_width']
-    target_height = batch['target_height']
-
     images = []
     processed_path = None
     for path in paths:
@@ -168,7 +163,7 @@ def average_Images(batch):
         del out
         processed_path = new_image_path
     except Exception as e:
-        logger.error('Failed to average images {} {}'.format(new_image_path, batch['paths']))
+        logger.error('Failed to average images {} {}'.format(new_image_path, paths))
         logger.exception(e)
     finally:
         del images
@@ -188,7 +183,7 @@ def process_Images(image_paths, window, step, target_width, target_height, dst):
         dst (str): Path to the destination folder, where the final video and optional the processed images are stored
 
     Returns:
-        [type]: [description]
+        list: Output paths, where images have been successfully processed and saved
     """    
     junksize = int(100/window)
     pool = ThreadPoolExecutor(max_workers=junksize)
@@ -214,5 +209,5 @@ def process_Images(image_paths, window, step, target_width, target_height, dst):
         batches.append({'paths': tmp, 'new_path': new_path.format(image_idx), 'target_width': target_width, 'target_height': target_height})
         image_idx = image_idx + 1
     
-    save_paths = list(tqdm(pool.map(average_Images, batches), total=len(batches)))
+    save_paths = list(tqdm(pool.map(lambda x: average_Images(**x), batches), total=len(batches)))
     return save_paths

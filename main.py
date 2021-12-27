@@ -9,7 +9,7 @@ import time
 log.setup_logging()
 logger = log.get_logger(__name__)
 
-def main(src, dst, window, step, filetype, average, imscale, vscale, novid, localize, ffmpeg_exe):
+def main(src, dst, window, step, filetype, average, imscale, vscale, novid, localize, fps, bitrate, ffmpeg_exe):
     
     start = time.time()
     click.echo('Start: {}'.format(datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
@@ -23,12 +23,12 @@ def main(src, dst, window, step, filetype, average, imscale, vscale, novid, loca
         if (average==True) and (novid==False):
             src_path = os.path.join(folder, 'Im_%d.{}'.format(filetype))
             dest_path = os.path.join(folder, 'timelapse_{}.mp4'.format(datetime.now().strftime('%Y%m%d%H%M%S')))
-            video_from_images(src_path=src_path, dest_path=dest_path, vscale=vscale, ffmpeg_exe=ffmpeg_exe)
+            video_from_images(src_path=src_path, dest_path=dest_path, vscale=vscale, fps=fps, bitrate=bitrate, ffmpeg_exe=ffmpeg_exe)
         elif (average == False):
             src_path = os.path.join(folder, '*.{}'.format(filetype))
             path_file = create_path_file(paths=paths, step=step)
             dest_path = os.path.join(folder, 'timelapse_{}.mp4'.format(datetime.now().strftime('%Y%m%d%H%M%S')))
-            video_from_paths(path_file=path_file, dest_path=dest_path, vscale=vscale, ffmpeg_exe=ffmpeg_exe)
+            video_from_paths(path_file=path_file, dest_path=dest_path, vscale=vscale, fps=fps, bitrate=bitrate, ffmpeg_exe=ffmpeg_exe)
             try:
                 os.remove(path=path_file)
             except Exception as e:
@@ -51,8 +51,10 @@ def main(src, dst, window, step, filetype, average, imscale, vscale, novid, loca
 @click.option('--vscale', default=1920, help='Defines the width of the output video. Height is calculated to preserve aspect ratio. Default is 1920.')
 @click.option('--novid', is_flag=True, default=False, help='If to omit video creation. Only used when --average == True.')
 @click.option('--localize', default=None, help='String for timezone conversion.')
+@click.option('--fps', default=30, help='Output framerate of the video. Default is 30.')
+@click.option('--bitrate', default=100, help='Output bitrate (Mbit/s) of the video. Default is 100.')
 @click.option('--ffmpeg-exe', default='/ffmpeg.exe', help='Path to ffmpeg.exe. Default is the current directory')
-def main_command(src, dst, window, step, filetype, average, imscale, vscale, novid, localize, ffmpeg_exe):
+def main_command(src, dst, window, step, filetype, average, imscale, vscale, novid, localize, fps, bitrate, ffmpeg_exe):
     """Create timelapse from images located in SRC and saves the video to DST
 
     If SRC contains subfolders, the program recursively scans all subfolders and creates a video per subfolder. The folder structure is replicated at DSC and the output videos are saved respectivly. 
@@ -61,7 +63,7 @@ def main_command(src, dst, window, step, filetype, average, imscale, vscale, nov
     
     If --novid is set to True along side with --average, only the intermediate (averaged) images are saved. Useful if you like to create the final video in a dedicated video editor.
     """
-    main(src, dst, window, step, filetype, average, imscale, vscale, novid, localize, ffmpeg_exe)
+    main(src, dst, window, step, filetype, average, imscale, vscale, novid, localize, fps, bitrate, ffmpeg_exe)
 
 
 

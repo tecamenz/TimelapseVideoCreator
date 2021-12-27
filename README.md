@@ -36,6 +36,8 @@ Options:
   --novid            If to omit video creation. Only used when --average ==
                      True.
   --localize TEXT    String for timezone conversion.
+  --fps INTEGER      Output framerate of the video. Default is 30.
+  --bitrate INTEGER  Output bitrate (Mbit/s) of the video. Default is 100.
   --ffmpeg-exe TEXT  Path to ffmpeg.exe. Default is the current directory
   --help             Show this message and exit.
 
