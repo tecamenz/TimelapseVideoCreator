@@ -1,7 +1,13 @@
 # TimelapseVideoCreator
+<img alt="GitHub Workflow Status" src="https://img.shields.io/github/workflow/status/tecamenz/TimelapseVideoCreator/Python%20application?label=CI">
 Simple command line tool to create timelapse videos from individual images. 
 
-Input images are sorted via EXIF timestamp to ensure correct order. 
+
+## Features:
+- Recursive image search in subfolders for batch processing (creates one video per subfolder)
+- Input images are sorted via EXIF timestamp to ensure correct ordering regardless of name
+- Multithreaded pre-processing pipeline to reduce flicker via rolling average filter
+- Using optimized parameters for [ffmpeg](https://ffmpeg.org/) to create good locking videos
 
 
 ## Usage
