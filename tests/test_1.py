@@ -28,20 +28,24 @@ class TestLoader(unittest.TestCase):
         
     def test_exif(self):
         filepath = 'tests/flat/1.jpg'
-        params = {'path': filepath, 'localize': None}
+        params = {'path': filepath, 'localize': 'Europe/Zurich'}
         ret = get_image_info(**params)
         self.assertEqual(ret['datetime'], 1640520023.0)
 
 class TestProcessing(unittest.TestCase):
     def test_process_folders(self):
-        expected = {'out\\flat':['tests/flat\\1.jpg', 'tests/flat\\2.jpg', 'tests/flat\\3.jpg', 'tests/flat\\4.jpg', 'tests/flat\\5.jpg']}
+        src='tests/flat'
+        dst='out'
+        expected = {os.path.join(dst, 'flat'): [os.path.join(src, '1.jpg'),os.path.join(src, '2.jpg'),os.path.join(src, '3.jpg'),os.path.join(src, '4.jpg'),os.path.join(src, '5.jpg'),]}
         ret = process_folders(src='tests/flat', dst='out', window=2, step=1, filetype='jpg', average=False, imscale=-1, localize=None)
         self.assertEqual(ret, expected)
 
     def test_process_Images(self):
         gen = get_batch_recursive('tests/flat', filetype='jpg')
         paths = next(gen)
-        expected = ['out\\Im_0.JPG', 'out\\Im_1.JPG', 'out\\Im_2.JPG', 'out\\Im_3.JPG', 'out\\Im_4.JPG']
+        dst='out'
+
+        expected = [os.path.join(dst, 'Im_0.JPG'),os.path.join(dst, 'Im_1.JPG'),os.path.join(dst, 'Im_2.JPG'),os.path.join(dst, 'Im_3.JPG'),os.path.join(dst, 'Im_4.JPG')]
         ret = process_Images(image_paths=paths, window=2, step=1, target_width=50, target_height=50, dst='out')
         self.assertEqual(ret, expected)
         if os.path.exists('out'):
