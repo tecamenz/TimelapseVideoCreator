@@ -5,3 +5,4 @@ numpy==1.21.5
 opencv-python==4.5.4.60
 ffmpeg-python==0.2.0
 pyinstaller==4.7
+pytz==2021.3

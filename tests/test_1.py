@@ -49,16 +49,16 @@ class TestProcessing(unittest.TestCase):
         else:
             self.assertTrue(False)
 
-    def test_process_Main(self):
-        src = 'tests/flat'
-        dst = 'out'
-        ffmpeg_exe = r'C:\Users\Cami\Documents\Programms\ffmpeg-4.4.1-full_build\bin\ffmpeg.exe'
-        main(src=src, dst=dst, window=2, step=1, filetype='jpg', average=True, imscale=-1, vscale=1920, novid=False, localize=None, fps=20, bitrate=10, ffmpeg_exe=ffmpeg_exe)
-        if os.path.exists('out'):
-            res = glob('out/flat/*.mp4')
-            self.assertEqual(len(res), 1)
-        else:
-            self.assertTrue(False)
+    # def test_process_Main(self):
+    #     src = 'tests/flat'
+    #     dst = 'out'
+    #     ffmpeg_exe = r'C:\Users\Cami\Documents\Programms\ffmpeg-4.4.1-full_build\bin\ffmpeg.exe'
+    #     main(src=src, dst=dst, window=2, step=1, filetype='jpg', average=True, imscale=-1, vscale=1920, novid=False, localize=None, fps=20, bitrate=10, ffmpeg_exe=ffmpeg_exe)
+    #     if os.path.exists('out'):
+    #         res = glob('out/flat/*.mp4')
+    #         self.assertEqual(len(res), 1)
+    #     else:
+    #         self.assertTrue(False)
 
     def tearDown(self):
         if os.path.exists('out'):
