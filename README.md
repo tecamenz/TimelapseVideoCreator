@@ -1,5 +1,5 @@
 # TimelapseVideoCreator
-<img alt="GitHub Workflow Status" src="https://img.shields.io/github/workflow/status/tecamenz/TimelapseVideoCreator/Python%20application?label=CI">
+<img alt="GitHub Workflow Status" src="https://img.shields.io/github/actions/workflow/status/tecamenz/TimelapseVideoCreator/python-app.yml?label=CI">
 Simple command line tool to create timelapse videos from individual images. 
 
 
